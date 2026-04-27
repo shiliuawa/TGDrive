@@ -140,6 +140,10 @@ src/
     debug.js            — KV 调试页面
 ```
 
+## AI 辅助
+
+本项目代码由 AI 辅助编写（基于 DeepSeek 模型）。
+
 ## 技术特点
 
 - 零依赖，纯 ES Module Worker
