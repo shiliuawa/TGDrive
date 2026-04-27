@@ -1,0 +1,25 @@
+name = "tgdrive"
+main = "src/index.js"
+compatibility_date = "2025-04-01"
+
+# ── 自定义域名（可选） ──
+# routes = [
+#   { pattern = "your-domain.com", custom_domain = true }
+# ]
+
+# ── KV 命名空间（必填） ──
+# 在 Cloudflare Dashboard 创建 KV 后填入 ID:
+#   npx wrangler kv:namespace create FILES_KV
+kv_namespaces = [
+  { binding = "FILES_KV", id = "" }
+]
+
+# ── 环境变量 ──
+# 以下变量请在 .env 文件中配置，通过 wrangler secret put 写入：
+#   npx wrangler secret put TELEGRAM_BOT_TOKEN
+#   npx wrangler secret put WEB_PASSWORD
+#   npx wrangler secret put CHAT_ID
+#   npx wrangler secret put BASE_LINK_URL
+#   npx wrangler secret put COOKIE_SECRET      # 可选，默认自动派生
+#   npx wrangler secret put WEBHOOK_SECRET     # 可选
+#   npx wrangler secret put MTPROXY_URL        # 可选，下载代理地址
