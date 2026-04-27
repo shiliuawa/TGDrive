@@ -147,6 +147,9 @@ export async function handlePublicUploadChunk(path, env, req) {
   const f  = fd.get("file");
   if (!f) return jsonResp({ error: "没有文件" }, 400);
 
+  if (config.maxSize && f.size > config.maxSize)
+    return jsonResp({ error: `文件超过大小限制（最大 ${config.maxSize} 字节）` }, 413);
+
   const tg = await tgSendDoc(env.CHAT_ID, f, f.name, env);
   if (!tg.ok || !tg.result?.document)
     return jsonResp({ error: "Bot API 错误: " + (tg.description || "未知") }, 502);
@@ -169,6 +172,9 @@ export async function handlePublicUploadCommit(path, env, req) {
   if (!fileName || !Array.isArray(chunks) || !chunks.length)
     return jsonResp({ error: "invalid body" }, 400);
 
+  if (config.maxSize && size > config.maxSize)
+    return jsonResp({ error: `文件超过大小限制（最大 ${config.maxSize} 字节）` }, 413);
+
   const key  = genKey();
   const nc   = chunks.length;
   const data = {
@@ -179,8 +185,6 @@ export async function handlePublicUploadCommit(path, env, req) {
     downloads: 0,
     fromPublic: true,
     ...(nc === 1 ? { fileId: chunks[0] } : { chunks }),
-    ...(nc > 1 ? { partNames: chunks.map((_, i) =>
-      `${fileName}.part${String(i + 1).padStart(3, "0")}`) } : {}),
   };
   await env.FILES_KV.put(key, JSON.stringify(data));
 

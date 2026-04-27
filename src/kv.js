@@ -36,13 +36,14 @@ export async function getOne(key, env) {
   try { return JSON.parse(raw); } catch { return null; }
 }
 
-/** Fire-and-forget download counter increment */
-export function incDownloads(key, env) {
-  getOne(key, env).then(info => {
+/** Download counter increment */
+export async function incDownloads(key, env) {
+  try {
+    const info = await getOne(key, env);
     if (!info) return;
     info.downloads = (info.downloads || 0) + 1;
-    env.FILES_KV.put(info.key, JSON.stringify(info));
-  }).catch(() => {});
+    await env.FILES_KV.put(info.key, JSON.stringify(info));
+  } catch {}
 }
 
 /** Returns null if accessible, or { msg, status } if denied */

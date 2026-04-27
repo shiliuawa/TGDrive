@@ -3,7 +3,7 @@ export const redir = (loc) => new Response(null, { status: 302, headers: { Locat
 export const txt = (s, status = 200) => new Response(s, { status });
 
 export const esc = (s) =>
-  String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#x27;");
 
 export const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 

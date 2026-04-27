@@ -52,12 +52,11 @@ export async function pageList(req, env, url) {
   }
 
   const totalSize = allFiles.reduce((s, f) => s + (f.size || 0), 0);
-  const totalDl   = 0;
 
-  const dirParam = currentDir ? `&dir=${esc(currentDir)}` : "";
+  const dirParam = currentDir ? `&dir=${encodeURIComponent(currentDir)}` : "";
   const sh = (col, label) => {
     const on = sort === col;
-    return `<a class="srt${on?' on':''}" href="/list?${q ? `q=${esc(q)}` : ""}${dirParam}&sort=${col}">${label}${on?" ↓":""}</a>`;
+    return `<a class="srt${on?' on':''}" href="/list?${q ? `q=${encodeURIComponent(q)}` : ""}${dirParam}&sort=${col}">${label}${on?" ↓":""}</a>`;
   };
 
   // Breadcrumb HTML

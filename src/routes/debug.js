@@ -4,8 +4,8 @@ import { esc, htmlResp, txt } from "../utils.js";
 export async function pageDebug(req, env) {
   const url      = new URL(req.url);
   const debugKey = env.COOKIE_SECRET || env.WEB_PASSWORD;
-  if (url.searchParams.get("key") !== debugKey)
-    return txt("403 Forbidden：需提供 ?key=<COOKIE_SECRET>", 403);
+  if (req.headers.get("X-Debug-Key") !== debugKey)
+    return txt("403 Forbidden：需提供 X-Debug-Key 请求头", 403);
 
   // Raw JSON output (for scripting)
   if (url.searchParams.get("raw") === "1") {

@@ -192,5 +192,6 @@ const navbar = (active) => `
 export const layout = (title, active, body, foot = "") =>
   `<!DOCTYPE html><html lang="zh"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https:; media-src 'self' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <title>${esc(title)} · TGDrive</title>${FONTS}${CSS}
 </head><body>${navbar(active)}${body}${foot}</body></html>`;

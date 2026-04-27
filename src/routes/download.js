@@ -14,7 +14,7 @@ export async function serveFile(key, env, req) {
   const ids = Array.isArray(info.chunks) ? info.chunks : (info.fileId ? [info.fileId] : null);
   if (!ids) return jsonResp({ error: "文件索引损坏" }, 500);
 
-  incDownloads(key, env);
+  await incDownloads(key, env);
 
   const total   = info.size || 0;
   const range   = req.headers.get("Range");

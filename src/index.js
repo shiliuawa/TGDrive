@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TGDrive — Cloudflare Worker
  *
@@ -71,7 +70,7 @@ export default {
       if (p === "/delete"           && M === "POST")  return handleDelete(req, env);
       if (p === "/rename"           && M === "POST")  return handleRename(req, env);
       if (p === "/note"             && M === "POST")  return handleNote(req, env);
-      if (p === "/cleanup")                            return handleCleanup(env);
+      if (p === "/cleanup"    && M === "GET")           return handleCleanup(env);
       if (p === "/debug")                              return pageDebug(req, env);
 
       // ── Folder management ──
@@ -91,7 +90,7 @@ export default {
       return txt("404 Not Found", 404);
     } catch (e) {
       console.error(e);
-      return txt("500 Internal Error: " + e.message, 500);
+      return txt("500 Internal Server Error", 500);
     }
   },
 };

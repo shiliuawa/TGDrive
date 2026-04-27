@@ -344,8 +344,6 @@ export async function handleCommit(req, env) {
     timestamp: Date.now(),
     downloads: 0,
     ...(nc === 1 ? { fileId: chunks[0] } : { chunks }),
-    ...(nc > 1 ? { partNames: chunks.map((_, i) =>
-      `${fileName}.part${String(i + 1).padStart(3, "0")}`) } : {}),
     ...(expires ? { expires } : {}),
     ...(maxDl   ? { maxDl }   : {}),
     ...(parent  ? { parent }  : {}),

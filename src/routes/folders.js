@@ -112,9 +112,28 @@ export async function handleMove(req, env) {
   // target can be null (root) or a folder key
 
   // Prevent moving a folder into itself or its own descendants
-  for (const k of keys) {
-    if (!k.startsWith("d_")) continue;
-    if (k === target) return jsonResp({ error: "不能将文件夹移入自身" }, 400);
+  const foldersToMove = keys.filter(k => k.startsWith("d_"));
+  if (foldersToMove.length > 0 && target) {
+    const allKeys = await kvListAll(env);
+    const dKeys = allKeys.filter(k => k.name.startsWith("d_"));
+    const entries = await kvBatchGet(dKeys, env);
+    const childMap = {};
+    for (const e of entries) {
+      const p = e.parent || null;
+      if (!childMap[p]) childMap[p] = [];
+      childMap[p].push(e.key);
+    }
+    for (const k of foldersToMove) {
+      if (k === target) return jsonResp({ error: "不能将文件夹移入自身" }, 400);
+      const queue = [k];
+      while (queue.length) {
+        const cur = queue.shift();
+        for (const ck of (childMap[cur] || [])) {
+          if (ck === target) return jsonResp({ error: "不能将文件夹移入其子目录" }, 400);
+          queue.push(ck);
+        }
+      }
+    }
   }
 
   const items = await Promise.all(keys.map(k => getOne(k, env)));

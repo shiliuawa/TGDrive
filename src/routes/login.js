@@ -46,7 +46,7 @@ export async function handleLogin(req, env) {
     status: 302,
     headers: {
       Location:    "/upload",
-      "Set-Cookie": `TGD_AUTH=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000`,
+      "Set-Cookie": `TGD_AUTH=${token}; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=2592000`,
     },
   });
 }

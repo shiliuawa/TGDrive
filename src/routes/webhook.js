@@ -13,8 +13,11 @@ export async function handleWebhook(req, env, ctx) {
   if (!msg) return txt("ok");
 
   const chatId   = msg.chat.id;
+  if (String(chatId) !== env.CHAT_ID) return txt("ok");
+
   const dedupKey = "dedup_" + body.update_id;
   if (await env.FILES_KV.get(dedupKey)) return txt("ok");
+  // Best-effort dedup: Telegram webhooks per chat are sequential, but cross-chat races are possible
   await env.FILES_KV.put(dedupKey, "1", { expirationTtl: DEDUP_TTL });
 
   const cap = (msg.caption || "").trim();

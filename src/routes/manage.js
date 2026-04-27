@@ -7,8 +7,9 @@ export async function handleDelete(req, env) {
   const fd   = await req.formData();
   const keys = fd.getAll("keys").filter(Boolean);
   if (!keys.length) return jsonResp({ ok: false, error: "no keys" }, 400);
-  await Promise.all(keys.map(k => env.FILES_KV.delete(k)));
-  return jsonResp({ ok: true, deleted: keys.length });
+  const allowed = keys.filter(k => k.startsWith("f_") || k.startsWith("d_"));
+  await Promise.all(allowed.map(k => env.FILES_KV.delete(k)));
+  return jsonResp({ ok: true, deleted: allowed.length });
 }
 
 export async function handleRename(req, env) {

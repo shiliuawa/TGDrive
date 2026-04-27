@@ -2,10 +2,10 @@ name = "tgdrive"
 main = "src/index.js"
 compatibility_date = "2025-04-01"
 
-# ── 自定义域名（可选） ──
-# routes = [
-#   { pattern = "your-domain.com", custom_domain = true }
-# ]
+# ── 自定义域名 ──
+routes = [
+  { pattern = "tgd.xkit.cc", custom_domain = true }
+]
 
 # ── KV 命名空间（必填） ──
 # 在 Cloudflare Dashboard 创建 KV 后填入 ID:

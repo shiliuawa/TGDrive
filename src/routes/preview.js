@@ -50,9 +50,9 @@ export async function pagePreview(key, env, url) {
   const prevKey = curIdx > 0 ? siblings[curIdx - 1] : null;
   const nextKey = curIdx >= 0 && curIdx < siblings.length - 1 ? siblings[curIdx + 1] : null;
   const galNav = prevKey || nextKey ? `<div class="gal-nav">
-    ${prevKey ? `<a class="btn btn-default btn-sm" href="/view/${prevKey}?siblings=${siblingsRaw}" id="galPrev">${ic(I.left)} 上一张</a>` : `<span class="btn btn-default btn-sm" style="opacity:.3;cursor:default">${ic(I.left)} 上一张</span>`}
+    ${prevKey ? `<a class="btn btn-default btn-sm" href="/view/${prevKey}?siblings=${encodeURIComponent(siblingsRaw)}" id="galPrev">${ic(I.left)} 上一张</a>` : `<span class="btn btn-default btn-sm" style="opacity:.3;cursor:default">${ic(I.left)} 上一张</span>`}
     <span class="sub" style="padding:4px 8px;font-size:.78rem">${curIdx + 1} / ${siblings.length}</span>
-    ${nextKey ? `<a class="btn btn-default btn-sm" href="/view/${nextKey}?siblings=${siblingsRaw}" id="galNext">下一张 ${ic(I.right)}</a>` : `<span class="btn btn-default btn-sm" style="opacity:.3;cursor:default">下一张 ${ic(I.right)}</span>`}
+    ${nextKey ? `<a class="btn btn-default btn-sm" href="/view/${nextKey}?siblings=${encodeURIComponent(siblingsRaw)}" id="galNext">下一张 ${ic(I.right)}</a>` : `<span class="btn btn-default btn-sm" style="opacity:.3;cursor:default">下一张 ${ic(I.right)}</span>`}
   </div>` : "";
 
   const tgLink = tgMsgLink(info);

@@ -1,4 +1,5 @@
-import { getOne, kvListAll } from "../kv.js";
+import { getOne, kvListAll, kvBatchGet } from "../kv.js";
+import { getAllFolders } from "./folders.js";
 import { jsonResp } from "../utils.js";
 
 export async function handleBatchUpdate(req, env) {
@@ -28,10 +29,29 @@ export async function handleBatchMove(req, env) {
   const { keys, target } = body;
   if (!Array.isArray(keys) || !keys.length) return jsonResp({ error: "缺少 keys" }, 400);
 
-  // Prevent folder self-move
-  for (const k of keys) {
-    if (!k.startsWith("d_")) continue;
-    if (k === target) return jsonResp({ error: "不能将文件夹移入自身" }, 400);
+  // Prevent folder self-move and circular references
+  const foldersToMove = keys.filter(k => k.startsWith("d_"));
+  if (foldersToMove.length > 0 && target) {
+    const allKeys = await kvListAll(env);
+    const dKeys = allKeys.filter(k => k.name.startsWith("d_"));
+    const entries = await kvBatchGet(dKeys, env);
+    const childMap = {};
+    for (const e of entries) {
+      const p = e.parent || null;
+      if (!childMap[p]) childMap[p] = [];
+      childMap[p].push(e.key);
+    }
+    for (const k of foldersToMove) {
+      if (k === target) return jsonResp({ error: "不能将文件夹移入自身" }, 400);
+      const queue = [k];
+      while (queue.length) {
+        const cur = queue.shift();
+        for (const ck of (childMap[cur] || [])) {
+          if (ck === target) return jsonResp({ error: "不能将文件夹移入其子目录" }, 400);
+          queue.push(ck);
+        }
+      }
+    }
   }
 
   let moved = 0;
@@ -48,15 +68,6 @@ export async function handleBatchMove(req, env) {
 
 /** Get all file & folder keys (for populating move target list) */
 export async function handleListFolders(req, env) {
-  const keys = await kvListAll(env);
-  const dkeys = keys.filter(k => k.name.startsWith("d_"));
-  const folders = await Promise.all(
-    dkeys.map(async k => {
-      const raw = await env.FILES_KV.get(k.name);
-      if (!raw) return null;
-      try { const d = JSON.parse(raw); return { key: d.key, name: d.name }; }
-      catch { return null; }
-    })
-  );
-  return jsonResp(folders.filter(Boolean));
+  const folders = await getAllFolders(env);
+  return jsonResp(folders.map(f => ({ key: f.key, name: f.name })));
 }
